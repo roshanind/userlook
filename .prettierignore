@@ -1,0 +1,12 @@
+
+#files
+.vscode
+*-lock.json
+package.json
+.*
+
+#folders
+build
+dist
+node_modules
+  

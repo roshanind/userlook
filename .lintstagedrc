@@ -1,0 +1,4 @@
+{
+  "*.{css,less,scss,html,json,jsx,js}": "pnpm prettier --fix --ignore-unknown",
+  "*.{jsx, js, ts, tsx}": "pnpm run eslint --fix"
+}
