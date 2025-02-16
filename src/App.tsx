@@ -1,35 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { PersistGate } from 'redux-persist/integration/react';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { Provider } from 'react-redux';
+import { BrowserRouter, Route, Routes } from 'react-router';
+
+import { persistor, store } from '@store/storeConfig';
+import { PageDetailsProvider } from '@providers/PageDetailsProvider';
+import GlobalStyles from '@ui/theme/GlobalStyles';
+import { theme } from '@ui/theme';
+
+import AppLayout from '@layouts/AppLayout';
+import PageLayout from '@layouts/PageLayout';
+
+import Dashboard from '@pages/Dashboard';
+import UsersPage from '@pages/UsersPage';
+
+import Header from '@globals/Header';
+import SideBar from '@globals/SideBar';
+import Footer from '@globals/Footer';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <GlobalStyles />
+          <PageDetailsProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route element={<AppLayout header={<Header />} sidebar={<SideBar />} footer={<Footer />} />}>
+                  <Route index element={<Dashboard />} />
+                  <Route element={<PageLayout />}>
+                    <Route path="manage-users" element={<UsersPage />} />
+                  </Route>
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </PageDetailsProvider>
+        </ThemeProvider>
+      </PersistGate>
+    </Provider>
+  );
 }
 
-export default App
+export default App;
