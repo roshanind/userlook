@@ -53,6 +53,7 @@
     "lint-staged": "^15.4.3",
     "miragejs": "^0.1.48",
     "prettier": "^3.5.0",
+    "rollup-plugin-visualizer": "^5.14.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "~5.7.2",

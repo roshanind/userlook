@@ -45,7 +45,7 @@ export function makeServer({ environment = "development" } = {}) {
       // Create a new user
       this.post("/users", (schema, request) => {
         const attrs = JSON.parse(request.requestBody);
-        return schema.create("user", { attrs, id: faker.string.uuid() });
+        return schema.create("user", { ...attrs, id: faker.string.uuid() });
       });
 
       // Update a user

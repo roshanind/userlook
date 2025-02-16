@@ -17,7 +17,7 @@ export const usersApi = createApi({
     endpoints: (builder) => ({
         fetchUsers: builder.query<{ users: User[] }, void>({
             query: () => 'users',
-            onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
                 try {
                     const { data } = await queryFulfilled;
                     console.log(data);
@@ -33,7 +33,7 @@ export const usersApi = createApi({
                 method: 'POST',
                 body: newUser,
             }),
-            onQueryStarted: async (newUser, { dispatch, queryFulfilled }) => {
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
                 try {
                     const { data } = await queryFulfilled;
                     dispatch(usersSlice.actions.addUser(data));
@@ -48,7 +48,7 @@ export const usersApi = createApi({
                 method: 'PUT',
                 body: updatedUser,
             }),
-            onQueryStarted: async (updatedUser, { dispatch, queryFulfilled }) => {
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
                 try {
                     const { data } = await queryFulfilled;
                     dispatch(usersSlice.actions.updateUser(data));
