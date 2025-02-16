@@ -26,7 +26,7 @@ function App() {
           <CssBaseline />
           <GlobalStyles />
           <PageDetailsProvider>
-            <BrowserRouter>
+            <BrowserRouter basename="/userlook">
               <Routes>
                 <Route element={<AppLayout header={<Header />} sidebar={<SideBar />} footer={<Footer />} />}>
                   <Route index element={<Dashboard />} />
