@@ -1,0 +1,13 @@
+# EditorConfig helps maintain consistent coding styles across different editors and IDEs
+root = true
+
+[*]  # Applies to all files
+indent_style = space   # Use spaces instead of tabs
+indent_size = 2        # Set indentation to 2 spaces
+end_of_line = lf       # Use LF (Unix-style) line endings
+charset = utf-8        # Ensure UTF-8 encoding
+trim_trailing_whitespace = true # Remove trailing whitespace
+insert_final_newline = true  # Ensure files end with a newline
+
+[*.md]  # Override for Markdown files
+trim_trailing_whitespace = false  # Keep trailing whitespace (useful for Markdown)
