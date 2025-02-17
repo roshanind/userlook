@@ -1,14 +1,14 @@
 import { useEffect, useMemo } from 'react';
 import { usePageDetails } from '@providers/PageDetailsProvider';
-import { selectUsers } from '@store/slices/users.slice';
+import { selectUsers, useFetchUsersQuery } from '@store/slices/users.slice';
 import { User } from '@type/user.types';
-import { Avatar, Box } from '@ui';
+import { Avatar, Box, CircularProgress } from '@ui';
 import VirtualizedTable, { ColumnDef } from '@ui/VirtualizedTable';
 import { useSelector } from 'react-redux';
 
 export default function UsersPage() {
   const { setIsFixedLayout } = usePageDetails();
-//   const { isLoading } = useFetchUsersQuery();
+  const { isLoading } = useFetchUsersQuery();
   const users = useSelector(selectUsers);
 
   useEffect(() => {
@@ -21,7 +21,8 @@ export default function UsersPage() {
       {
         accessorKey: 'profileImage',
         header: 'Profile Image',
-        cell: (info) => (info.getValue() ? <Avatar sx={{ width: 24, height: 24 }} src={info.getValue() as string} /> : null),
+        cell: (info) =>
+          info.getValue() ? <Avatar sx={{ width: 24, height: 24 }} src={info.getValue() as string} /> : null,
         size: 100,
         minSize: 100,
         maxSize: 100,
@@ -40,7 +41,8 @@ export default function UsersPage() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <VirtualizedTable<User> data={users} columns={columnConfig} />
+      {isLoading && <CircularProgress size={16} />}
+      <VirtualizedTable<User> key={new Date().toISOString()} data={users} columns={columnConfig} />
     </Box>
   );
 }

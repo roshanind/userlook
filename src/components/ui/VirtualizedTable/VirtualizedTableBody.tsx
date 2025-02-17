@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Table } from '@tanstack/react-table';
 
@@ -35,6 +35,10 @@ export default function VirtualizedTableBody<T>({ table, tableContainerRef }: Pr
         : undefined,
     overscan: 5,
   });
+
+  useLayoutEffect(() => {
+    virtualizer.measure();
+  }, [virtualizer]);
 
   return (
     <TableBody

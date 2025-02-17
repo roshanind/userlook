@@ -28,7 +28,6 @@ export default function VirtualizedTable<T>({ data, columns }: Props<T>) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
   });
 
   const tableContainerRef = React.useRef<HTMLDivElement>(null);

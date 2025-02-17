@@ -20,7 +20,6 @@ export const usersApi = createApi({
             onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
                 try {
                     const { data } = await queryFulfilled;
-                    console.log(data);
                     dispatch(usersSlice.actions.setUsers(data?.users));
                 } catch (error) {
                     console.error('Failed to fetch users:', error);

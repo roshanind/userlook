@@ -4,10 +4,9 @@ import { makeServer } from './mock/server.ts';
 
 import App from './App.tsx'
 
-// commenting the condition to run the server in production
-// if (import.meta.env.MODE === "development") {
+if (["development", "production"].includes(import.meta.env.MODE)) {
   makeServer();
-// }
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
