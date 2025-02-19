@@ -24,6 +24,7 @@ type Props<T> = {
 export default function VirtualizedTableRow<T>({ row, virtualRow, rowVirtualizer }: Props<T>) {
   return (
     <TableRow
+      id={row.id}
       data-index={virtualRow.index}
       ref={node => rowVirtualizer.measureElement(node)}
       key={row.id}

@@ -12,6 +12,7 @@ import SortIcon from '@mui/icons-material/Sort';
 import CloseIcon from '@mui/icons-material/Close';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export {
   HomeIcon,
@@ -27,5 +28,6 @@ export {
   SortIcon,
   CloseIcon,
   KeyboardArrowUpIcon,
-  KeyboardArrowDownIcon
+  KeyboardArrowDownIcon,
+  PersonAddIcon,
 };

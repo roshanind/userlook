@@ -1,10 +1,19 @@
-import { createServer, Model, Factory, Response } from "miragejs";
+import { createServer, Model, Factory, Response, Serializer } from "miragejs";
 import { faker } from "@faker-js/faker";
 import { User } from "@type/user.types";
 
 export function makeServer({ environment = "development" } = {}) {
   return createServer({
     environment,
+
+    serializers: {
+
+      user: Serializer.extend({
+        valueForId(value: string) {
+          return parseInt(value);
+        },
+      }),
+    },
 
     models: {
       user: Model.extend<Partial<User>>({}),
@@ -15,6 +24,7 @@ export function makeServer({ environment = "development" } = {}) {
         firstName: () => faker.person.firstName(),
         lastName: () => faker.person.lastName(),
         age: () => faker.number.int({ min: 18, max: 80 }),
+        gender: () => faker.helpers.arrayElements(['male', 'female', 'other'], 1)[0],
         city: () => faker.location.city(),
         country: () => faker.location.country(),
         birthday: () => faker.date.birthdate().toLocaleDateString(),
@@ -45,7 +55,7 @@ export function makeServer({ environment = "development" } = {}) {
       // Create a new user
       this.post("/users", (schema, request) => {
         const attrs = JSON.parse(request.requestBody);
-        return schema.create("user", { ...attrs, id: faker.string.uuid() });
+        return schema.create("user", { ...attrs, id: faker.number.int() });
       });
 
       // Update a user
@@ -53,12 +63,18 @@ export function makeServer({ environment = "development" } = {}) {
         const user = schema.find("user", request.params.id);
         const newAttrs = JSON.parse(request.requestBody);
         return user?.update(newAttrs) ?? new Response(404, {}, { error: "User not found" });
-      });
+      }, { timing: 10000 });
 
       // Delete a user
       this.del("/users/:id", (schema, request) => {
         const user = schema.find("user", request.params.id);
-        return user?.destroy() ?? new Response(404, {}, { error: "User not found" });
+        
+        if (user) {
+          user.destroy();
+          return new Response(204);
+        } else {
+          return new Response(404, {}, { error: "User not found" });
+        }
       });
     },
   });

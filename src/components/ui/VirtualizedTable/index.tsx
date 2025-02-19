@@ -36,7 +36,7 @@ export default function VirtualizedTable<T>({ data, columns }: Props<T>) {
     <TableContainer
       className="container"
       ref={tableContainerRef}
-      sx={{ height: '100%' }}
+      sx={{ height: '100%', border: '1px solid', borderColor: 'divider' }}
       component={Paper}
     >
       <Table stickyHeader sx={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}>

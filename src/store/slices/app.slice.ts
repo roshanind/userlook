@@ -1,5 +1,6 @@
-import { THEME } from '@constants/app.constant';
 import { createSlice } from '@reduxjs/toolkit';
+
+import { THEME } from '@constants/app.constants';
 import { AppState } from '@type/app.types';
 
 const initialState: AppState = {

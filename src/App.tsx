@@ -4,7 +4,9 @@ import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { persistor, store } from '@store/storeConfig';
+import { FORM_MODE } from '@constants/form.constants';
 import { PageDetailsProvider } from '@providers/PageDetailsProvider';
+
 import GlobalStyles from '@ui/theme/GlobalStyles';
 import { theme } from '@ui/theme';
 
@@ -13,6 +15,7 @@ import PageLayout from '@layouts/PageLayout';
 
 import Dashboard from '@pages/Dashboard';
 import UsersPage from '@pages/UsersPage';
+import UsersViewEditCreate from '@pages/UsersViewEditCreate';
 
 import Header from '@globals/Header';
 import SideBar from '@globals/SideBar';
@@ -31,7 +34,11 @@ function App() {
                 <Route element={<AppLayout header={<Header />} sidebar={<SideBar />} footer={<Footer />} />}>
                   <Route index element={<Dashboard />} />
                   <Route element={<PageLayout />}>
-                    <Route path="manage-users" element={<UsersPage />} />
+                    <Route path="manage-users">
+                      <Route index element={<UsersPage />} />
+                      <Route path="edit-user/:id" element={<UsersViewEditCreate />} />
+                      <Route path="create-user" element={<UsersViewEditCreate mode={FORM_MODE.CREATE} />}  />
+                    </Route>
                   </Route>
                 </Route>
               </Routes>

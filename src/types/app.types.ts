@@ -1,4 +1,4 @@
-import { THEME } from "@constants/app.constant";
+import { THEME } from "@constants/app.constants";
 
 export type AppState = {
   theme: typeof THEME[keyof typeof THEME];
