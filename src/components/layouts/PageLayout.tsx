@@ -8,9 +8,9 @@ export default function PageLayout() {
   return (
     <Content container>
       <Grid size={12}>
-        <Typography variant='h1'>{title}</Typography>
+        <Typography variant="h1">{title}</Typography>
       </Grid>
-      <Grid size={12} flexGrow={1} display="flex" {...(isFixedLayout ? { overflow: 'hidden' } : {})}>
+      <Grid size={12} flexGrow={1} display="flex" overflow={isFixedLayout ? 'hidden' : 'auto'}>
         <Outlet />
       </Grid>
     </Content>

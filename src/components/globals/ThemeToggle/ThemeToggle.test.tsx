@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, store, waitFor } from '@testUtils';
 import ThemeToggle from '.';
 import { toggleTheme } from '@store/slices/app.slice';
-import { THEME } from '@constants/app.constant';
+import { THEME } from '@constants/app.constants';
 
 describe('ThemeToggle', () => {
   test('renders ThemeToggle component', () => {

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { selectTheme, toggleTheme } from '@store/slices/app.slice';
-import { THEME } from '@constants/app.constant';
+import { THEME } from '@constants/app.constants';
 import { FormControlLabel, styled, Switch, Tooltip, useColorScheme } from '@ui';
 import { DarkModeIcon, LightModeIcon } from '@ui/icons';
 
