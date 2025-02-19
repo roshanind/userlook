@@ -18,10 +18,22 @@ export default defineConfig({
           if (id.includes('node_modules')) {
             if (id.includes('@mui')) {
               return 'vendor_mui';
+            } else if (id.includes('react-router')) {
+              return 'vendor_react-router';
             } else if (id.includes('react-router-dom') || id.includes('@remix-run') || id.includes('react-router')) {
               return 'vendor_react_router';
             } else if (id.includes('react-redux')) {
               return 'vendor_react-redux';
+            } else if (id.includes('tanstack')) {
+              return 'tanstack';
+            } else if (id.includes('visx')) {
+              return 'vendor_visx';
+            } else if (id.includes('faker-js')) {
+              return 'vendor_faker-js';
+            } else if (id.includes('miragejs')) {
+              return 'vendor_miragejs';
+            } else if (id.includes('react-dom')) {
+              return 'vendor_react-dom';
             }
 
             return 'vendor'; // all other package goes here

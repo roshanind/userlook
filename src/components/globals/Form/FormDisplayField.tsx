@@ -3,11 +3,11 @@ import { Fade, Grid, styled, Typography } from '@ui';
 import { FieldConfig } from '@type/form.types';
 import { FILED_TYPE } from '@constants/form.constants';
 
-type Props = {
-  field: FieldConfig<unknown>;
+type Props<FormValues> = {
+  field: FieldConfig<FormValues>;
 };
 
-const getDisplayValue = (field: FieldConfig<unknown>, value: string) => {
+const getDisplayValue = <FormValues extends object>(field: FieldConfig<FormValues>, value: string) => {
   if ((field.type === FILED_TYPE.LIST || field.type === FILED_TYPE.OPTIONS) && field.options) {
     const selectedOption = field.options.find((option) => option.value === value);
     if (selectedOption) {
@@ -17,12 +17,12 @@ const getDisplayValue = (field: FieldConfig<unknown>, value: string) => {
   return value || 'Not specified';
 };
 
-export default function FormDisplayField({ field }: Props) {
-  const value = field.initialValue;
-  const displayValue = getDisplayValue(field, value);
+export default function FormDisplayField<FormValues extends object>({ field }: Props<FormValues>) {
+  const value = String(field.initialValue);
+  const displayValue = getDisplayValue<FormValues>(field, value);
 
   return (
-    <GridContainer container spacing={2} key={field.id}>
+    <GridContainer container spacing={2} key={String(field.id)}>
       <Grid size={{ xs: 12, sm: 4, md: 3 }}>
         <Typography variant="subtitle1" fontWeight="medium" color="text.secondary">
           {field.label}
