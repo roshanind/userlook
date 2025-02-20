@@ -34,6 +34,15 @@ To start the development server and view the project in your browser, run:
 pnpm start
 ```
 
+### 3. Accessing the webapp
+
+To access the webapp please navigate to `http://localhost:<port>/userlook`
+
+You might wonder why you have to type `userlook` path explicitly. This is temporary and the reason for this is I am hosting this webapp in github Pages. Since Github pages only support static files client side routing will not work. Solutions I am thinking of:
+
+1. Use hash router and through a env config I can switch the router mode when building the webapp in github
+2. Use Vercel or Netlify to host the webapp
+
 #### Other Commands
 
 ##### 3. Build for Production
