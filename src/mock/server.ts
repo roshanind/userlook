@@ -40,6 +40,7 @@ export function makeServer({ environment = "development" } = {}) {
 
     routes() {
       this.namespace = "api";
+      this.timing = 3000;
       
       // Get all users
       this.get("/users", (schema) => {
@@ -63,7 +64,7 @@ export function makeServer({ environment = "development" } = {}) {
         const user = schema.find("user", request.params.id);
         const newAttrs = JSON.parse(request.requestBody);
         return user?.update(newAttrs) ?? new Response(404, {}, { error: "User not found" });
-      }, { timing: 10000 });
+      });
 
       // Delete a user
       this.del("/users/:id", (schema, request) => {

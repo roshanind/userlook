@@ -36,11 +36,11 @@ export default function UsersViewEditCreate({ mode }: Props) {
 
   const handleOnSubmit = async (values: User) => {
     if (formMode === FORM_MODE.CREATE) {
-      await createUser(values);
-      navigate('/manage-users');
+      const result = await createUser(values);
+      navigate('/manage-users', { state: { id: result.data?.user.id } });
     } else if (user){
-      await updateUser({ ...values, id: user.id});
-      navigate('/manage-users');
+      const result = await updateUser({ ...values, id: user.id});
+      navigate('/manage-users', { state: { id: result.data?.user.id, isScrollAuto: true } });
     }
   }
 
@@ -122,7 +122,7 @@ export default function UsersViewEditCreate({ mode }: Props) {
         formActions={({ isValid, submitForm, isSubmitting }) => (
           <>
             <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting} onClick={() => {
-              navigate('/manage-users');
+              navigate('/manage-users', { state: { id: user?.id, isScrollAuto: true } });
             }}>
               Cancel
             </Button>

@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ColumnDef, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { Virtualizer } from '@tanstack/react-virtual';
 
 import { Paper, Table, TableContainer } from '@ui';
 
 import VirtualizedTableBody from './VirtualizedTableBody';
 import VirtualizedTableHeader from './VirtualizedTableHeader';
+import ScrollToRecord from './ScrollToRecord';
 
 type Props<T> = {
   data: Array<T>;
   columns: Array<ColumnDef<T>>;
+  scrollToRowId?: number;
+  idAccessorKey?: keyof T;
+  isScrollAuto?: boolean;
 };
 
 /**
@@ -22,7 +27,7 @@ type Props<T> = {
  * 
  * @returns {JSX.Element} The rendered virtualized table component.
  */
-export default function VirtualizedTable<T>({ data, columns }: Props<T>) {
+export default function VirtualizedTable<T>({ data, columns, idAccessorKey, scrollToRowId, isScrollAuto }: Props<T>) {
   const table = useReactTable({
     data,
     columns,
@@ -31,18 +36,26 @@ export default function VirtualizedTable<T>({ data, columns }: Props<T>) {
   });
 
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
+  const tableRowRef = React.useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
+
+  const scrollToIndex = useMemo(() => {
+    if (scrollToRowId !== undefined && idAccessorKey) {
+      return table.getRowModel().rows.findIndex((row) => row.original[idAccessorKey] === scrollToRowId);
+    }
+  }, [scrollToRowId, idAccessorKey, table]);
 
   return (
     <TableContainer
       className="container"
       ref={tableContainerRef}
-      sx={{ height: '100%', border: '1px solid', borderColor: 'divider' }}
+      sx={{ height: '100%', border: '1px solid', borderColor: 'divider', position: 'relative' }}
       component={Paper}
     >
       <Table stickyHeader sx={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}>
         <VirtualizedTableHeader table={table} />
-        <VirtualizedTableBody table={table} tableContainerRef={tableContainerRef} />
+        <VirtualizedTableBody ref={tableRowRef} table={table} tableContainerRef={tableContainerRef} />
       </Table>
+      <ScrollToRecord recordIndex={scrollToIndex} rowVirtualizer={tableRowRef.current} isScrollAuto={isScrollAuto} />
     </TableContainer>
   );
 }

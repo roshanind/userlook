@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 import { User } from '@type/user.types';
 import { FORM_MODE } from '@constants/form.constants';
@@ -16,6 +16,7 @@ export default function UsersPage() {
   const { isLoading } = useFetchUsersQuery();
   const users = useSelector(selectUsers);
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [deleteUser, { isLoading: isUserDeleting, originalArgs }] = useDeleteUserMutation();
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function UsersPage() {
         </Grid>
       </Grid>
       <Grid size={12} sx={{ minHeight: 0, display: 'flex', justifyContent: 'flex-end' }}>
-        <VirtualizedTable<User> data={users} columns={columnConfig} />
+        <VirtualizedTable<User> data={users} columns={columnConfig} idAccessorKey="id" scrollToRowId={state?.id} isScrollAuto={state?.isScrollAuto} />
       </Grid>
     </Grid>
   );

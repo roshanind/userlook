@@ -39,6 +39,8 @@ import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import FormHelperText from '@mui/material/FormHelperText';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -88,4 +90,6 @@ export {
   RadioGroup,
   Radio,
   FormHelperText,
+  Alert,
+  AlertTitle,
 };
