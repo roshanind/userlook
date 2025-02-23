@@ -27,7 +27,7 @@ export function makeServer({ environment = "development" } = {}) {
         gender: () => faker.helpers.arrayElements(['male', 'female', 'other'], 1)[0],
         city: () => faker.location.city(),
         country: () => faker.location.country(),
-        birthday: () => faker.date.birthdate().toLocaleDateString(),
+        birthday: () => faker.date.birthdate(),
         nic: () => faker.string.numeric({ length: 10 }),
         profileImage: () => faker.image.avatar(),
         phoneNumber: () => faker.phone.number({ style: "international" }),
@@ -56,7 +56,10 @@ export function makeServer({ environment = "development" } = {}) {
       // Create a new user
       this.post("/users", (schema, request) => {
         const attrs = JSON.parse(request.requestBody);
-        return schema.create("user", { ...attrs, id: faker.number.int() });
+        // get the last user id sorted by id
+        const users = schema.all("user").models as User[];
+        const lastUserId = users.sort((a, b) => b.id - a.id)[0].id;
+        return schema.create("user", { ...attrs, id: lastUserId + 1 });
       });
 
       // Update a user

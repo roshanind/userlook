@@ -48,7 +48,7 @@ export default function VirtualizedTable<T>({ data, columns, idAccessorKey, scro
     <TableContainer
       className="container"
       ref={tableContainerRef}
-      sx={{ height: '100%', border: '1px solid', borderColor: 'divider', position: 'relative' }}
+      sx={{ height: '100%', border: '1px solid', borderColor: 'divider', position: 'relative', overflow: 'auto' }}
       component={Paper}
     >
       <Table stickyHeader sx={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}>

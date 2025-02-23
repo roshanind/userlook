@@ -18,6 +18,7 @@
     "@faker-js/faker": "^9.5.0",
     "@mui/icons-material": "^6.4.3",
     "@mui/material": "^6.4.3",
+    "@mui/x-date-pickers": "^7.27.0",
     "@reduxjs/toolkit": "^2.5.1",
     "@tanstack/react-table": "^8.21.2",
     "@tanstack/react-virtual": "^3.13.0",

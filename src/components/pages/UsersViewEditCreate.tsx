@@ -49,6 +49,13 @@ export default function UsersViewEditCreate({ mode }: Props) {
       <FormikForm<User>
         fields={[
           {
+            id: 'profileImage',
+            label: 'Profile Image',
+            type: FILED_TYPE.IMAGE,
+            initialValue: user?.profileImage || '',
+            validation: string()
+          },
+          {
             id: 'firstName',
             label: 'First Name',
             type: FILED_TYPE.INPUT,
@@ -67,7 +74,7 @@ export default function UsersViewEditCreate({ mode }: Props) {
             label: 'Age',
             type: FILED_TYPE.INPUT,
             initialValue: user?.age || 0,
-            validation: number().required('Age is required'),
+            validation: number().moreThan(17).required('Age is required'),
           },
           {
             id: 'gender',
@@ -84,7 +91,7 @@ export default function UsersViewEditCreate({ mode }: Props) {
           {
             id: 'birthday',
             label: 'Birthday',
-            type: FILED_TYPE.INPUT,
+            type: FILED_TYPE.DATE,
             initialValue: user?.birthday || '',
             validation: string().required('Birthday is required'),
           },
@@ -121,7 +128,7 @@ export default function UsersViewEditCreate({ mode }: Props) {
         onSubmit={handleOnSubmit}
         formActions={({ isValid, submitForm, isSubmitting }) => (
           <>
-            <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting} onClick={() => {
+            <Button color="secondary" variant="outlined" disabled={isSubmitting} onClick={() => {
               navigate('/manage-users', { state: { id: user?.id, isScrollAuto: true } });
             }}>
               Cancel

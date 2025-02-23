@@ -1,15 +1,13 @@
-// Enhanced Responsive PieChart Component (src/components/charts/PieChart.tsx)
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { Pie } from '@visx/shape';
 import { Group } from '@visx/group';
 import { scaleOrdinal } from '@visx/scale';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { LegendOrdinal } from '@visx/legend';
-import { Text } from '@visx/text';
-import { Box, useTheme, Typography } from '@mui/material';
 
-// Generic props for reusability
+import { Box, Typography, useTheme } from '@ui';
+
 export type PieChartProps<T> = {
   data: T[];
   margin?: { top: number; right: number; bottom: number; left: number };
@@ -18,7 +16,7 @@ export type PieChartProps<T> = {
   colorKey: keyof T & string;
   title?: string;
   showLegend?: boolean;
-  aspectRatio?: number; // Optional aspect ratio constraint (width/height)
+  aspectRatio?: number;
 };
 
 /**
@@ -46,209 +44,166 @@ export default function PieChart<T>({
   colorKey,
   title,
   showLegend = true,
-  aspectRatio = 1.5, // Default aspect ratio
+  aspectRatio = 1.5,
 }: PieChartProps<T>) {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 200 });
+  const animationFrameId = useRef<number>(null);
 
-  // Tooltip setup
   const { tooltipData, tooltipLeft, tooltipTop, tooltipOpen, showTooltip, hideTooltip } = useTooltip<T>();
-
   const { containerRef: tooltipContainerRef, TooltipInPortal } = useTooltipInPortal({
     scroll: true,
     detectBounds: true,
   });
 
-  // Use ResizeObserver to handle responsive sizing
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries || !entries[0]) return;
-
-      const { width } = entries[0].contentRect;
-      let height = width / aspectRatio;
-
-      // Set minimum height to ensure chart is visible
-      height = Math.max(height, 200);
+    const updateDimensions = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const width = Math.floor(rect.width);
+      const height = Math.floor(Math.max(width / aspectRatio, 200));
 
       setDimensions({ width, height });
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+      animationFrameId.current = requestAnimationFrame(updateDimensions);
     });
 
     resizeObserver.observe(containerRef.current);
+    updateDimensions();
 
     return () => {
-      if (containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
       }
+      resizeObserver.disconnect();
     };
   }, [aspectRatio]);
 
-  // Dimensions
-  const innerWidth = dimensions.width - margin.left - margin.right;
-  const innerHeight = dimensions.height - margin.top - margin.bottom;
-  const radius = Math.min(innerWidth, innerHeight) / 2;
-  const centerX = innerWidth / 2 + margin.left;
-  const centerY = innerHeight / 2 + margin.top;
+  const { radius, centerX, centerY } = useMemo(() => {
+    const innerWidth = dimensions.width - margin.left - margin.right;
+    const innerHeight = dimensions.height - margin.top - margin.bottom;
+    return {
+      radius: Math.min(innerWidth, innerHeight) / 2,
+      centerX: innerWidth / 2 + margin.left,
+      centerY: innerHeight / 2 + margin.top,
+    };
+  }, [dimensions, margin]);
 
-  // Prepare scales and colors
-  const getColor = (d: T) => String(d[colorKey]);
-  const getLabel = (d: T) => String(d[labelKey]);
-  const getValue = (d: T) => Number(d[valueKey]);
-
-  const colorScale = useMemo(
-    () =>
-      scaleOrdinal({
-        domain: data.map(getLabel),
-        range: data.map(getColor),
+  const { colorScale, total } = useMemo(
+    () => ({
+      colorScale: scaleOrdinal({
+        domain: data.map((d) => String(d[labelKey])),
+        range: data.map((d) => String(d[colorKey])),
       }),
-    [data, labelKey, colorKey]
+      total: data.reduce((sum, d) => sum + Number(d[valueKey]), 0),
+    }),
+    [data, labelKey, colorKey, valueKey]
   );
-
-  // Calculate total for percentage display
-  const total = useMemo(() => data.reduce((sum, d) => sum + getValue(d), 0), [data, valueKey]);
-
-  // Handle tooltip
-  const handleMouseOver = (event: React.MouseEvent<SVGGElement>, d: T) => {
-    const point = localPoint(event);
-
-    if (point) {
-      showTooltip({
-        tooltipData: d,
-        tooltipLeft: point.x,
-        tooltipTop: point.y,
-      });
-    }
-  };
-
-  // Adjust font size based on chart dimensions
-  const getLabelFontSize = () => {
-    if (dimensions.width < 300) return 8;
-    if (dimensions.width < 500) return 10;
-    return 12;
-  };
 
   return (
     <Box
       ref={tooltipContainerRef}
       sx={{
-        width: '100%', // Take full width of parent
+        width: '100%',
         position: 'relative',
         fontFamily: theme.typography.fontFamily,
-        display: 'flex',
-        alignItems: 'center',
-        flexDirection: 'column',
       }}
-      p={2}
     >
-      <Box>
-        {title && (
-          <Typography variant="h6" align="center">
-            {title}
-          </Typography>
-        )}
-      </Box>
+      {title && (
+        <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+          {title}
+        </Typography>
+      )}
 
-      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
         <Box
           ref={containerRef}
           sx={{
-            height: 'auto',
-            minHeight: 200,
-            flexGrow: 1,
+            flex: 1,
             minWidth: 0,
-            display: 'flex',
-            justifyContent: 'center',
           }}
         >
           <svg width={dimensions.width} height={dimensions.height} style={{ display: 'block' }}>
             <Group top={centerY} left={centerX}>
               <Pie
                 data={data}
-                pieValue={getValue}
+                pieValue={(d) => Number(d[valueKey])}
                 outerRadius={radius}
                 innerRadius={radius / 3}
                 cornerRadius={3}
                 padAngle={0.01}
               >
-                {(pie) => {
-                  return pie.arcs.map((arc, index) => {
-                    const arcPath = pie.path(arc);
+                {(pie) =>
+                  pie.arcs.map((arc, index) => {
                     const arcData = arc.data as T;
-                    const arcValue = getValue(arcData);
+                    const arcValue = Number(arcData[valueKey]);
                     const percentage = ((arcValue / total) * 100).toFixed(1);
+                    const [centroidX, centroidY] = pie.path.centroid(arc);
 
                     return (
                       <g
                         key={`arc-${index}`}
-                        onPointerMove={(e) => handleMouseOver(e, arcData)}
-                        onPointerLeave={hideTooltip}
+                        onMouseMove={(event) => {
+                          const point = localPoint(event);
+                          if (point) {
+                            showTooltip({
+                              tooltipData: arcData,
+                              tooltipLeft: point.x,
+                              tooltipTop: point.y,
+                            });
+                          }
+                        }}
+                        onMouseLeave={hideTooltip}
                       >
                         <path
-                          d={arcPath || ''}
-                          fill={getColor(arcData)}
+                          d={pie.path(arc) || ''}
+                          fill={String(arcData[colorKey])}
                           stroke={theme.palette.background.paper}
                           strokeWidth={1}
                         />
-
-                        {/* Show percentage label inside the pie slice if large enough */}
                         {arcValue / total > 0.05 && radius > 50 && (
-                          <Text
+                          <text
+                            x={centroidX}
+                            y={centroidY}
                             textAnchor="middle"
-                            verticalAnchor="middle"
-                            transform={`translate(${pie.path.centroid(arc)[0]}, ${pie.path.centroid(arc)[1]})`}
-                            style={{
-                              fill: theme.palette.getContrastText(getColor(arcData)),
-                              fontSize: getLabelFontSize(),
-                              fontWeight: 'bold',
-                              pointerEvents: 'none',
-                            }}
+                            fill={theme.palette.getContrastText(String(arcData[colorKey]))}
+                            fontSize={12}
+                            dy=".33em"
                           >
                             {`${percentage}%`}
-                          </Text>
+                          </text>
                         )}
                       </g>
                     );
-                  });
-                }}
+                  })
+                }
               </Pie>
             </Group>
           </svg>
         </Box>
 
-        {/* Legend with responsive layout */}
         {showLegend && (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              mt: 2,
-              fontSize: getLabelFontSize(),
-            }}
-          >
+          <Box sx={{ minWidth: 100 }}>
             <LegendOrdinal
               scale={colorScale}
               direction="column"
-              labelFormat={(label) => {
-                const item = data.find((d) => getLabel(d) === label);
-                if (item) {
-                  return dimensions.width < 350
-                    ? `${label.substring(0, 3)}` // Shortened for small screens
-                    : `${label}`;
-                }
-                return label;
-              }}
+              labelFormat={(label) => String(label)}
               shape="circle"
-              shapeHeight={dimensions.width < 350 ? 8 : 15}
-              shapeWidth={dimensions.width < 350 ? 8 : 15}
+              shapeHeight={15}
+              shapeWidth={15}
               itemMargin="0 8px"
             />
           </Box>
         )}
 
-        {/* Tooltip */}
         {tooltipOpen && tooltipData && (
           <TooltipInPortal
             top={tooltipTop}
@@ -265,10 +220,10 @@ export default function PieChart<T>({
             }}
           >
             <div>
-              <strong>{getLabel(tooltipData)}</strong>
+              <strong>{String(tooltipData[labelKey])}</strong>
             </div>
             <div>
-              Count: {getValue(tooltipData)} ({((getValue(tooltipData) / total) * 100).toFixed(1)}%)
+              Value: {Number(tooltipData[valueKey])} ({((Number(tooltipData[valueKey]) / total) * 100).toFixed(1)}%)
             </div>
           </TooltipInPortal>
         )}

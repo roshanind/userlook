@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
+import { format } from 'date-fns';
 
 import { User } from '@type/user.types';
 import { FORM_MODE } from '@constants/form.constants';
@@ -40,7 +41,7 @@ export default function UsersPage() {
       { accessorKey: 'lastName', header: 'Last Name', size: 100, minSize: 100, maxSize: 200 },
       { accessorKey: 'age', header: 'Age', size: 50, minSize: 50 },
       { accessorKey: 'gender', header: 'Gender', size: 100, minSize: 50 },
-      { accessorKey: 'birthday', header: 'Birthday', size: 100, minSize: 100 },
+      { accessorKey: 'birthday', header: 'Birthday', size: 100, minSize: 100, cell: ({ row }) => format(new Date(row.original.birthday), 'MM/dd/yyyy') },
       { accessorKey: 'city', header: 'City', size: 100, minSize: 100 },
       { accessorKey: 'country', header: 'Country', size: 100, minSize: 100 },
       { accessorKey: 'nic', header: 'NIC', size: 100, minSize: 100 },

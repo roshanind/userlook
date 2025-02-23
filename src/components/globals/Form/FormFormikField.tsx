@@ -4,7 +4,10 @@ import { FILED_TYPE } from '@constants/form.constants';
 import { FieldConfig } from '@type/form.types';
 
 import {
+  AdapterDateFns,
+  Avatar,
   Box,
+  DatePicker,
   Fade,
   FormControl,
   FormControlLabel,
@@ -12,6 +15,7 @@ import {
   FormLabel,
   Grid,
   InputLabel,
+  LocalizationProvider,
   MenuItem,
   Radio,
   RadioGroup,
@@ -30,10 +34,7 @@ type Props<FormValues> = {
   onValuesChange?: (values: FormValues) => void;
 };
 
-export default function FormFormikField<FormValues extends object>({ 
-  field, 
-  onValuesChange 
-}: Props<FormValues>) {
+export default function FormFormikField<FormValues extends object>({ field, onValuesChange }: Props<FormValues>) {
   const { values, errors, touched, setFieldValue } = useFormikContext<FormValues>();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -41,7 +42,7 @@ export default function FormFormikField<FormValues extends object>({
   // Add type assertions to handle the string indexing
   const fieldId = field.id as string;
   const hasError = touched[fieldId as keyof FormValues] && Boolean(errors[fieldId as keyof FormValues]);
-  const errorMessage = hasError ? errors[fieldId as keyof FormValues] as string : '';
+  const errorMessage = hasError ? (errors[fieldId as keyof FormValues] as string) : '';
 
   let fieldComponent: React.ReactNode;
 
@@ -104,9 +105,9 @@ export default function FormFormikField<FormValues extends object>({
                   setFieldValue(fieldId, e.target.value);
                   if (onValuesChange && values) {
                     // Create a new values object with the updated field
-                    const newValues = { 
-                      ...values, 
-                      [fieldId]: e.target.value 
+                    const newValues = {
+                      ...values,
+                      [fieldId]: e.target.value,
                     } as FormValues;
                     onValuesChange(newValues);
                   }
@@ -124,7 +125,53 @@ export default function FormFormikField<FormValues extends object>({
         </FormControl>
       );
       break;
-
+    case FILED_TYPE.IMAGE:
+      fieldComponent = (
+        <Field name={fieldId}>
+          {({ field: formikField }: FieldProps) => (
+            <Box display="flex" alignItems="center">
+              <TextField
+                {...formikField}
+                fullWidth
+                label={isSmallScreen ? field.label : undefined}
+                placeholder={field.label}
+                error={hasError}
+                helperText={errorMessage || ''}
+                size="small"
+                sx={{ mr: 2 }}
+              />
+              <Avatar src={formikField.value} />
+            </Box>
+          )}
+        </Field>
+      );
+      break;
+    case FILED_TYPE.DATE:
+      fieldComponent = (
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Field name={fieldId}>
+            {({ field: formikField, form: { setFieldValue } }: FieldProps) => (
+              <DatePicker
+                value={formikField.value ? new Date(formikField.value) : null}
+                onChange={(newValue) => {
+                  setFieldValue(fieldId, newValue);
+                }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    label: isSmallScreen ? field.label : undefined,
+                    placeholder: field.label,
+                    error: hasError,
+                    helperText: errorMessage || '',
+                    size: 'small',
+                  },
+                }}
+              />
+            )}
+          </Field>
+        </LocalizationProvider>
+      );
+      break;
     default:
       fieldComponent = null;
   }
@@ -132,13 +179,13 @@ export default function FormFormikField<FormValues extends object>({
   return (
     <GridContainer container spacing={2} key={fieldId}>
       {!isSmallScreen && (
-        <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 3, md: 2 }}>
           <Typography variant="subtitle1" fontWeight="medium" color="text.secondary">
             {field.label}
           </Typography>
         </Grid>
       )}
-      <Grid size={{ xs: 12, sm: 8, md: 9 }}>
+      <Grid size={{ xs: 12, sm: 9, md: 10 }}>
         <Fade in={true} timeout={300}>
           <Box width="100%">{fieldComponent}</Box>
         </Fade>
