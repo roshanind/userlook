@@ -11,7 +11,7 @@ import { usePageDetails } from '@providers/PageDetailsProvider';
 import { selectUsers, useAddUserMutation, useUpdateUserMutation } from '@store/slices/users.slice';
 
 import { Box, Button, CircularProgress } from '@ui';
-import FormikForm from '@globals/Form/FormikForm';
+import FormikForm from '@ui/Form/FormikForm';
 
 type Props = {
   mode?: FormMode

@@ -10,7 +10,9 @@ Welcome to the **Userlook** project! This is a Frontend (FE) development project
 4. [Path Aliases in `tsconfig.app.json`](#path-aliases-in-tsconfigjson)
 5. [State Management with RTK and RTK Query](#state-management-with-rtk-and-rtk-query)
 6. [UI with Material-UI and Theme Customization](#ui-with-material-ui-and-theme-customization)
-7. [Testing](#testing)
+7. [Component Libraries](#component-libraries)
+8. [Custom Component Compositions](#custom-component-compositions)
+9. [Testing](#testing)
 
 ---
 
@@ -79,7 +81,6 @@ To run the tests with Jest, use:
 pnpm run test
 ```
 
----
 
 ## Developer Experience (DX)
 
@@ -94,8 +95,6 @@ In this project, the following tools have been used to improve the DX:
 - **[Commitlint](https://commitlint.js.org/)**: Ensures commit messages follow a defined convention for consistency.
 - **[Commitizen](https://github.com/commitizen/cz-cli)**: Helps you write standardized commit messages in a conventional format.
 - **[GitHub Actions](https://github.com/features/actions)**: A CI/CD platform for automating workflows such as testing, building, and deploying code.
-
----
 
 ## Project Structure
 
@@ -135,8 +134,6 @@ In this project, the following tools have been used to improve the DX:
 
 > **Why a separate folder for types?**  
 > This is an opinionated decision. I prefer keeping all types in one place to avoid duplication and ensure consistency. This approach helps prevent type mismatches across the project.
-
----
 
 ## Path Aliases in `tsconfig.json`
 
@@ -209,8 +206,6 @@ import { User } from '@type/user.types'; // Points to src/types/users.types.ts
 4. **Complexity in Large Projects**:  
    For very large projects, overuse of aliases can make it harder to track where certain modules are coming from, especially if aliases are used too generically (e.g., `@models`, `@services`, etc.). It's important to keep the alias structure organized to avoid confusion.
 
----
-
 ## State Management with RTK and RTK Query
 
 This project uses **[Redux Toolkit (RTK)](https://redux-toolkit.js.org/)** for state management and **[RTK Query](https://redux-toolkit.js.org/rtk-query/overview)** for handling data fetching and caching. RTK simplifies Redux development and provides a standardized approach to managing application state.
@@ -226,8 +221,6 @@ This project uses **[Redux Toolkit (RTK)](https://redux-toolkit.js.org/)** for s
 - **Built-in Hooks**: RTK Query generates React hooks like `useGetPostsQuery` to simplify component logic.
 - **Pagination Support**: Easily handle paginated data.
 - **Optimistic Updates**: Automatically update the UI when data is being modified.
-
----
 
 ## UI with Material-UI and Theme Customization
 
@@ -252,7 +245,168 @@ Theme files are situated in `src/components/ui/theme` folder.
 
 Try to leverage Material UI's style overriding capabilities to reduce duplicate styles and maintain consistency throughout the application.
 
----
+## Component Libraries  
+
+In this project, the following libraries have been used to enhance functionality, maintainability, and user experience:  
+
+1. **[TanStack React-Table](https://tanstack.com/table/v8) with [TanStack Virtual](https://tanstack.com/virtual/v3)**  
+   Efficiently handles large datasets with virtual scrolling, customizable tables, and flexible column configurations. Ideal for creating powerful and performant data grids.  
+
+2. **[Airbnb Visx](https://airbnb.io/visx/)**  
+   A versatile and lightweight visualization library built on D3, enabling modular, reusable, and responsive graphs and charts. Perfect for building complex data visualizations in React.  
+
+3. **[Yup](https://www.npmjs.com/package/yup)**  
+   Schema validation for object structures, providing robust form validation logic. Ensures form data integrity with minimal boilerplate.  
+
+4. **[Formik](https://formik.org/)**  
+   Simplifies form state management, validation, and submission. Integrates seamlessly with Yup for validation, reducing repetitive code and enhancing maintainability.  
+
+5. **[Date-Fns](https://date-fns.org/)**  
+   A lightweight and modern date utility library for manipulating and formatting dates in JavaScript. It offers a comprehensive set of functions without bloating bundle size.  
+
+## Custom Component Compositions
+
+This project includes several custom component compositions to enhance functionality and maintainability. Below are the key custom components:
+
+### 1. Graphs
+
+#### PieChart
+
+The `PieChart` component is used to display data in a pie chart format. It is built using the Airbnb Visx library for creating modular and reusable charts.
+
+**Usage:**
+
+```typescript
+import React from 'react';
+import { PieChart } from '@ui';
+
+const data = [
+  { label: 'Category A', value: 30 },
+  { label: 'Category B', value: 70 },
+];
+
+const MyPieChartComponent = () => {
+  return <PieChart data={data} />;
+};
+
+export default MyPieChartComponent;
+```
+
+#### BarChart
+
+The `BarChart` component is used to display data in a bar chart format. Like the `PieChart`, it leverages the Airbnb Visx library for creating responsive and customizable charts.
+
+**Usage:**
+
+```typescript
+import React from 'react';
+import { BarChart } from '@ui';
+
+const data = [
+  { label: 'Category A', value: 30 },
+  { label: 'Category B', value: 70 },
+];
+
+const MyBarChartComponent = () => {
+  return <BarChart data={data} />;
+};
+
+export default MyBarChartComponent;
+```
+
+### 2. VirtualizedTable
+
+The `VirtualizedTable` component is designed to handle large datasets efficiently by implementing virtual scrolling. It uses the TanStack React-Table and TanStack Virtual libraries to provide a performant and flexible table component.
+
+**Usage:**
+
+```typescript
+import React from 'react';
+import { VirtualizedTable } from '@ui';
+
+const columns = [
+  { Header: 'Name', accessor: 'name' },
+  { Header: 'Age', accessor: 'age' },
+];
+
+const data = [
+  { name: 'John Doe', age: 28 },
+  { name: 'Jane Smith', age: 34 },
+  // ...more data
+];
+
+const MyVirtualizedTableComponent = () => {
+  return <VirtualizedTable columns={columns} data={data} />;
+};
+
+export default MyVirtualizedTableComponent;
+```
+
+### 3. Form
+
+#### FormDisplayField
+
+The `FormDisplayField` component is used to display form fields in a read-only mode. It is useful for showing form data without allowing edits.
+
+**Usage:**
+
+```typescript
+import FormDisplayField from '@ui/Form/FormDisplayField';
+
+const field = {
+  id: 'name',
+  label: 'Name',
+  initialValue: 'John Doe',
+};
+
+<FormDisplayField field={field} />;
+```
+
+#### FormFormikField
+
+The `FormFormikField` component integrates with Formik to manage form state and validation. It simplifies the creation of form fields with built-in validation logic.
+
+**Usage:**
+
+```typescript
+import FormFormikField from '@ui/Form/FormFormikField';
+
+const field = {
+  id: 'name',
+  label: 'Name',
+  initialValue: 'John Doe',
+  validation: Yup.string().required('Name is required'),
+};
+
+<FormFormikField field={field} />;
+```
+
+#### FormikForm
+
+The `FormikForm` component is a higher-level component that wraps Formik forms, providing a standardized structure for form handling, validation, and submission.
+
+**Usage:**
+
+```typescript
+import FormikForm from '@ui/Form/FormikForm';
+
+const fields = [
+  {
+    id: 'name',
+    label: 'Name',
+    initialValue: 'John Doe',
+    validation: Yup.string().required('Name is required'),
+  },
+  {
+    id: 'age',
+    label: 'Age',
+    initialValue: 30,
+    validation: Yup.number().required('Age is required'),
+  },
+];
+
+<FormikForm fields={fields} mode="edit" />;
+```
 
 ## Testing
 
